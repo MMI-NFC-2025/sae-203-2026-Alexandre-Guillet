@@ -1,0 +1,3 @@
+Pocketbase
+login : alexandre.guillet45@gmail.com
+mdp : AlexandreGuillet45
