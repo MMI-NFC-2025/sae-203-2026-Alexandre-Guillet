@@ -1,91 +1,140 @@
-import pocketbase from "pocketbase";
-const pb = new pocketbase("http://127.0.0.1:8090/_/");
+import PocketBase from "pocketbase";
 
-export async function artistesSorted() {
-  const records = await pb
-    .collection("artistes")
-    .getFullList({ sort: "date_de_representation" });
-  return records;
+// Connexion a PocketBase
+const pb = new PocketBase("http://127.0.0.1:8090");
+
+// URL de base pour les fichiers/images
+export const pbUrl = "http://127.0.0.1:8090";
+
+// Fonction pour obtenir l'URL d'une image PocketBase
+export function getImageUrl(record, filename) {
+  if (!record || !filename) return null;
+  return `${pbUrl}/api/files/${record.collectionId}/${record.id}/${filename}`;
 }
 
-export async function scenesName() {
-  const records = await pb.collection("scenes").getFullList({ sort: "nom" });
-  return records;
-}
+// --- ARTISTES ---
 
-export async function artistesName() {
-  const records = await pb.collection("artistes").getFullList({ sort: "nom" });
-  return records;
-}
-
-export async function artisteID(id) {
-  const record = await pb.collection("artistes").getOne(id);
-  return record;
-}
-
-export async function sceneID(id) {
-  const record = await pb.collection("scenes").getOne(id);
-  return record;
-}
-
-export async function allartistebysceneId(id) {
-  const records = await pb
-    .collection("artistes")
-    .getFullList({ filter: (scene = "${id}"), sort: "date_de_representation" });
-  return records;
-}
-
-export async function allartistebysceneName(nom) {
-  const scene = await pb
-    .collection("scenes")
-    .getFirstListItem((nom = "${nom}"));
+// Recuperer tous les artistes tries par date
+export async function getAllArtistes() {
   const records = await pb.collection("artistes").getFullList({
-    filter: (scene = "${scenes.id}"),
     sort: "date_de_representation",
   });
   return records;
 }
 
-export async function addArtiste(artisteData) {
+// Recuperer tous les artistes tries par nom
+export async function getArtistesByName() {
+  const records = await pb.collection("artistes").getFullList({
+    sort: "nom",
+  });
+  return records;
+}
+
+// Recuperer un artiste par son ID
+export async function getArtisteById(id) {
+  const record = await pb.collection("artistes").getOne(id);
+  return record;
+}
+
+// Recuperer les artistes d'une scene par l'ID de la scene
+export async function getArtistesBySceneId(sceneId) {
+  const records = await pb.collection("artistes").getFullList({
+    filter: `scene = "${sceneId}"`,
+    sort: "date_de_representation",
+  });
+  return records;
+}
+
+// --- SCENES ---
+
+// Recuperer toutes les scenes triees par nom
+export async function getAllScenes() {
+  const records = await pb.collection("scenes").getFullList({
+    sort: "nom",
+  });
+  return records;
+}
+
+// Recuperer une scene par son ID
+export async function getSceneById(id) {
+  const record = await pb.collection("scenes").getOne(id);
+  return record;
+}
+
+// --- AJOUTER ---
+
+// Ajouter un artiste
+export async function addArtiste(data) {
   try {
-    const record = await pb.collection("artistes").create(artisteData);
-    console.log("Artiste ajouté :", record);
+    const record = await pb.collection("artistes").create(data);
+    console.log("Artiste ajoute :", record);
     return record;
   } catch (error) {
-    console.error("Erreur lors de l'ajout de l'artiste :", error);
+    console.error("Erreur ajout artiste :", error);
     throw error;
   }
 }
 
-export async function addScene(sceneData) {
+// Ajouter une scene
+export async function addScene(data) {
   try {
-    const record = await pb.collection("scenes").create(sceneData);
-    console.log("Scène ajoutée :", record);
+    const record = await pb.collection("scenes").create(data);
+    console.log("Scene ajoutee :", record);
     return record;
   } catch (error) {
-    console.error("Erreur lors de l'ajout de la scène :", error);
+    console.error("Erreur ajout scene :", error);
     throw error;
   }
 }
 
-export async function updateArtiste(id, artisteData) {
+// --- MODIFIER ---
+
+// Modifier un artiste
+export async function updateArtiste(id, data) {
   try {
-    const record = await pb.collection("artistes").update(id, artisteData);
-    console.log("Artiste modifié :", record);
+    const record = await pb.collection("artistes").update(id, data);
+    console.log("Artiste modifie :", record);
     return record;
   } catch (error) {
-    console.error("Erreur lors de la modification de l'artiste :", error);
+    console.error("Erreur modification artiste :", error);
     throw error;
   }
 }
 
-export async function updateScene(id, sceneData) {
+// Modifier une scene
+export async function updateScene(id, data) {
   try {
-    const record = await pb.collection("scenes").update(id, sceneData);
-    console.log("Scène modifiée :", record);
+    const record = await pb.collection("scenes").update(id, data);
+    console.log("Scene modifiee :", record);
     return record;
   } catch (error) {
-    console.error("Erreur lors de la modification de la scène :", error);
+    console.error("Erreur modification scene :", error);
+    throw error;
+  }
+}
+
+// --- SUPPRIMER ---
+
+// Supprimer un artiste
+export async function deleteArtiste(id) {
+  try {
+    await pb.collection("artistes").delete(id);
+    console.log("Artiste supprime :", id);
+    return true;
+  } catch (error) {
+    console.error("Erreur suppression artiste :", error);
+    throw error;
+  }
+}
+
+// Supprimer une scene
+export async function deleteScene(id) {
+  try {
+    await pb.collection("scenes").delete(id);
+    console.log("Scene supprimee :", id);
+    return true;
+  } catch (error) {
+    console.error("Erreur suppression scene :", error);
     throw error;
   }
 }

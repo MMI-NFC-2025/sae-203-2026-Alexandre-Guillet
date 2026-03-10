@@ -1,0 +1,23 @@
+---
+// Composant Button
+// Usage: <Button href="/page">Mon bouton</Button>
+// Usage: <Button href="/page" variant="outline">Mon bouton</Button>
+
+interface Props {
+  href: string;
+  variant?: "primary" | "outline";
+  class?: string;
+}
+
+const { href, variant = "primary", class: className = "" } = Astro.props;
+
+const baseClass = "px-6 py-3 rounded font-bold inline-block";
+const variants = {
+  primary: "bg-orprofond text-noir hover:bg-doreclair",
+  outline: "border border-ivoir text-ivoir hover:bg-ivoir hover:text-noir",
+};
+---
+
+<a href={href} class={`${baseClass} ${variants[variant]} ${className}`}>
+  <slot />
+</a>

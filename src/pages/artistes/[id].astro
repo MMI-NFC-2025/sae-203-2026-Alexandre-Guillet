@@ -1,0 +1,107 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PbImage from '../../components/PbImage.astro';
+import Button from '../../components/Button.astro';
+import { getAllArtistes, getArtisteById, getSceneById } from '../../../backend/backend.mjs';
+
+// Pour le build statique, generer toutes les pages
+export async function getStaticPaths() {
+  let artistes = [];
+  try {
+    artistes = await getAllArtistes();
+  } catch (error) {
+    console.error("Erreur chargement artistes:", error);
+  }
+  
+  return artistes.map((artiste) => ({
+    params: { id: artiste.id },
+  }));
+}
+
+// Recuperer l'artiste par son ID
+const { id } = Astro.params;
+
+let artiste = null;
+let scene = null;
+
+try {
+  artiste = await getArtisteById(id);
+  
+  // Si l'artiste a une scene, on la recupere
+  if (artiste && artiste.scene) {
+    scene = await getSceneById(artiste.scene);
+  }
+} catch (error) {
+  console.error("Erreur chargement artiste:", error);
+}
+
+// Formater la date
+function formatDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+---
+
+<Layout>
+  {artiste ? (
+    <>
+      <PageHeader title={artiste.nom} subtitle={artiste.type || "Artiste"} />
+      
+      <section class="py-12 px-4 max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded shadow">
+          <!-- Image -->
+          <PbImage 
+            record={artiste} 
+            filename={artiste.image} 
+            alt={artiste.nom}
+            class="w-full h-64 md:h-96 object-cover rounded mb-8"
+          />
+          
+          <!-- Infos -->
+          <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">A propos</h2>
+            <p class="text-grisclair leading-relaxed">{artiste.description}</p>
+          </div>
+          
+          <!-- Date et lieu -->
+          {artiste.date_de_representation && (
+            <div class="bg-doreclair p-6 rounded mb-8">
+              <h3 class="text-xl font-bold mb-4">Representation</h3>
+              <p class="mb-2">
+                <span class="font-bold">Date :</span> {formatDate(artiste.date_de_representation)}
+              </p>
+              {scene && (
+                <p>
+                  <span class="font-bold">Lieu :</span>{" "}
+                  <a href={`/scenes/${scene.id}`} class="text-orprofond hover:underline">
+                    {scene.nom}
+                  </a>
+                </p>
+              )}
+            </div>
+          )}
+          
+          <!-- Retour -->
+          <Button href="/artistes">Retour aux artistes</Button>
+        </div>
+      </section>
+    </>
+  ) : (
+    <>
+      <PageHeader title="Artiste non trouve" />
+      <section class="py-12 px-4 max-w-4xl mx-auto text-center">
+        <p class="mb-8">Cet artiste n'existe pas ou la connexion a echoue.</p>
+        <Button href="/artistes">Retour aux artistes</Button>
+      </section>
+    </>
+  )}
+</Layout>

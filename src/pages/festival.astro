@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Card from '../components/Card.astro';
 ---
 
 <Layout>
-  <!-- Titre de la page -->
   <section class="bg-noir text-ivoir text-center py-16 px-4">
     <p class="text-orprofond mb-2">Le Festival</p>
     <h1 class="text-4xl font-bold">27 ans de passion pour la musique classique</h1>
@@ -42,25 +43,21 @@ import Layout from '../layouts/Layout.astro';
       <h2 class="text-3xl font-bold mb-8 text-center">Nos Valeurs</h2>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white p-6 rounded shadow">
-          <h3 class="text-xl font-bold mb-2">Excellence Artistique</h3>
+        <Card title="Excellence Artistique">
           <p class="text-grisclair">Proposer une programmation de qualite exceptionnelle avec les meilleurs artistes internationaux.</p>
-        </div>
+        </Card>
         
-        <div class="bg-white p-6 rounded shadow">
-          <h3 class="text-xl font-bold mb-2">Accessibilite</h3>
+        <Card title="Accessibilite">
           <p class="text-grisclair">Rendre la musique classique accessible a tous les publics, des melomanes aux neophytes.</p>
-        </div>
+        </Card>
         
-        <div class="bg-white p-6 rounded shadow">
-          <h3 class="text-xl font-bold mb-2">Transmission</h3>
+        <Card title="Transmission">
           <p class="text-grisclair">Favoriser la decouverte et l'apprentissage de la musique classique aupres des jeunes generations.</p>
-        </div>
+        </Card>
         
-        <div class="bg-white p-6 rounded shadow">
-          <h3 class="text-xl font-bold mb-2">Innovation</h3>
+        <Card title="Innovation">
           <p class="text-grisclair">Proposer des formats innovants tout en respectant les traditions du repertoire classique.</p>
-        </div>
+        </Card>
       </div>
     </div>
   </section>

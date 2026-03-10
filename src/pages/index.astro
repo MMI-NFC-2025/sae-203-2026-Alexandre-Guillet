@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
+import Card from '../components/Card.astro';
 ---
 
 <Layout>
@@ -14,12 +16,8 @@ import Layout from '../layouts/Layout.astro';
     </div>
     
     <div class="flex flex-wrap justify-center gap-4">
-      <a href="/programme" class="bg-orprofond text-noir px-6 py-3 rounded font-bold hover:bg-doreclair">
-        Reserver vos billets
-      </a>
-      <a href="/programme" class="border border-ivoir px-6 py-3 rounded hover:bg-ivoir hover:text-noir">
-        Decouvrir le programme
-      </a>
+      <Button href="/programme">Reserver vos billets</Button>
+      <Button href="/programme" variant="outline">Decouvrir le programme</Button>
     </div>
   </section>
 
@@ -28,33 +26,21 @@ import Layout from '../layouts/Layout.astro';
     <h2 class="text-3xl font-bold text-center mb-12">Decouvrez le Festival</h2>
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Carte Programme -->
-      <div class="bg-white p-6 rounded shadow">
-        <h3 class="text-xl font-bold mb-2">Programme</h3>
+      <Card title="Programme" link="/programme">
         <p class="text-grisclair mb-4">8 soirees exceptionnelles avec les plus grands chefs-d'oeuvre</p>
-        <a href="/programme" class="text-orprofond hover:underline">En savoir plus</a>
-      </div>
+      </Card>
       
-      <!-- Carte Artistes -->
-      <div class="bg-white p-6 rounded shadow">
-        <h3 class="text-xl font-bold mb-2">Artistes</h3>
+      <Card title="Artistes" link="/artistes">
         <p class="text-grisclair mb-4">Decouvrez les artistes de renommee internationale</p>
-        <a href="/artistes" class="text-orprofond hover:underline">En savoir plus</a>
-      </div>
+      </Card>
       
-      <!-- Carte Scenes -->
-      <div class="bg-white p-6 rounded shadow">
-        <h3 class="text-xl font-bold mb-2">Scenes</h3>
+      <Card title="Scenes" link="/scenes">
         <p class="text-grisclair mb-4">3 salles prestigieuses au coeur de Paris</p>
-        <a href="/scenes" class="text-orprofond hover:underline">En savoir plus</a>
-      </div>
+      </Card>
       
-      <!-- Carte Festival -->
-      <div class="bg-white p-6 rounded shadow">
-        <h3 class="text-xl font-bold mb-2">Le Festival</h3>
+      <Card title="Le Festival" link="/festival">
         <p class="text-grisclair mb-4">27 ans de passion pour la musique classique</p>
-        <a href="/festival" class="text-orprofond hover:underline">En savoir plus</a>
-      </div>
+      </Card>
     </div>
   </section>
 
@@ -64,20 +50,17 @@ import Layout from '../layouts/Layout.astro';
       <h2 class="text-3xl font-bold text-center mb-12">Informations Pratiques</h2>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Dates -->
         <div class="bg-white p-6 rounded shadow text-center">
           <h3 class="text-xl font-bold mb-2">Dates</h3>
           <p class="text-2xl text-orprofond font-bold">15-22 Juin 2025</p>
         </div>
         
-        <!-- Lieu -->
         <div class="bg-white p-6 rounded shadow text-center">
           <h3 class="text-xl font-bold mb-2">Lieu</h3>
           <p class="text-lg">Opera National, Paris</p>
           <a href="/scenes" class="text-orprofond hover:underline">Acces</a>
         </div>
         
-        <!-- Billetterie -->
         <div class="bg-white p-6 rounded shadow text-center">
           <h3 class="text-xl font-bold mb-2">Billetterie</h3>
           <p class="text-lg mb-2">A partir de 35 euros</p>
@@ -111,9 +94,7 @@ import Layout from '../layouts/Layout.astro';
     
     <div class="text-center mt-8">
       <p class="mb-4">Vous souhaitez devenir partenaire ?</p>
-      <a href="#" class="bg-orprofond text-noir px-6 py-3 rounded font-bold hover:bg-doreclair">
-        Contactez-nous
-      </a>
+      <Button href="#">Contactez-nous</Button>
     </div>
   </section>
 </Layout>

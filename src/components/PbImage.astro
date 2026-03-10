@@ -1,0 +1,32 @@
+---
+// Composant pour afficher une image PocketBase
+// Usage: <PbImage record={artiste} filename={artiste.image} alt="Photo" />
+
+interface Props {
+  record: any;
+  filename: string;
+  alt: string;
+  class?: string;
+}
+
+const { record, filename, alt, class: className = "" } = Astro.props;
+
+// URL de base PocketBase
+const pbUrl = "http://127.0.0.1:8090";
+
+// Construire l'URL de l'image
+function getImageUrl(record: any, filename: string) {
+  if (!record || !filename) return null;
+  return `${pbUrl}/api/files/${record.collectionId}/${record.id}/${filename}`;
+}
+
+const imageUrl = getImageUrl(record, filename);
+---
+
+{imageUrl ? (
+  <img src={imageUrl} alt={alt} class={className} />
+) : (
+  <div class={`bg-grisclair/30 flex items-center justify-center ${className}`}>
+    Photo
+  </div>
+)}

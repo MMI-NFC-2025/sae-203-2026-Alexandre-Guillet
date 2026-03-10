@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SceneCard from '../../components/SceneCard.astro';
+import { getAllScenes } from '../../../backend/backend.mjs';
+
+// Recuperer toutes les scenes depuis PocketBase
+let scenes = [];
+try {
+  scenes = await getAllScenes();
+} catch (error) {
+  console.error("Erreur chargement scenes:", error);
+}
+---
+
+<Layout>
+  <PageHeader 
+    title="Nos Scenes" 
+    subtitle="Trois salles prestigieuses au coeur de Paris" 
+  />
+
+  <section class="py-12 px-4 max-w-4xl mx-auto">
+    {scenes.length > 0 ? (
+      <div class="flex flex-col gap-8">
+        {scenes.map((scene) => (
+          <SceneCard scene={scene} />
+        ))}
+      </div>
+    ) : (
+      <p class="text-center text-grisclair">Aucune scene trouvee. Verifiez la connexion PocketBase.</p>
+    )}
+  </section>
+</Layout>

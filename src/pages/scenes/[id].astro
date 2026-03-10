@@ -1,0 +1,101 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PbImage from '../../components/PbImage.astro';
+import Button from '../../components/Button.astro';
+import ArtisteCard from '../../components/ArtisteCard.astro';
+import { getAllScenes, getSceneById, getArtistesBySceneId } from '../../../backend/backend.mjs';
+
+// Pour le build statique, generer toutes les pages
+export async function getStaticPaths() {
+  let scenes = [];
+  try {
+    scenes = await getAllScenes();
+  } catch (error) {
+    console.error("Erreur chargement scenes:", error);
+  }
+  
+  return scenes.map((scene) => ({
+    params: { id: scene.id },
+  }));
+}
+
+// Recuperer la scene par son ID
+const { id } = Astro.params;
+
+let scene = null;
+let artistes = [];
+
+try {
+  scene = await getSceneById(id);
+  
+  // Recuperer les artistes de cette scene
+  if (scene) {
+    artistes = await getArtistesBySceneId(scene.id);
+  }
+} catch (error) {
+  console.error("Erreur chargement scene:", error);
+}
+---
+
+<Layout>
+  {scene ? (
+    <>
+      <PageHeader title={scene.nom} subtitle={scene.adresse} />
+      
+      <section class="py-12 px-4 max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded shadow mb-8">
+          <!-- Image -->
+          <PbImage 
+            record={scene} 
+            filename={scene.image} 
+            alt={scene.nom}
+            class="w-full h-64 md:h-96 object-cover rounded mb-8"
+          />
+          
+          <!-- Infos -->
+          <div class="flex flex-wrap gap-4 mb-8">
+            <span class="bg-orprofond text-noir px-4 py-2 rounded font-bold">
+              {scene.capacite} places
+            </span>
+          </div>
+          
+          <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">A propos</h2>
+            <p class="text-grisclair leading-relaxed">{scene.description}</p>
+          </div>
+          
+          <!-- Acces -->
+          {scene.acces && (
+            <div class="bg-doreclair p-6 rounded mb-8">
+              <h3 class="text-xl font-bold mb-2">Acces</h3>
+              <p>{scene.acces}</p>
+            </div>
+          )}
+          
+          <Button href="/scenes">Retour aux scenes</Button>
+        </div>
+        
+        <!-- Artistes de cette scene -->
+        {artistes.length > 0 && (
+          <div>
+            <h2 class="text-2xl font-bold mb-6">Artistes sur cette scene</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {artistes.map((artiste) => (
+                <ArtisteCard artiste={artiste} />
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+    </>
+  ) : (
+    <>
+      <PageHeader title="Scene non trouvee" />
+      <section class="py-12 px-4 max-w-4xl mx-auto text-center">
+        <p class="mb-8">Cette scene n'existe pas ou la connexion a echoue.</p>
+        <Button href="/scenes">Retour aux scenes</Button>
+      </section>
+    </>
+  )}
+</Layout>
