@@ -1,9 +1,119 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import '../styles/global.css';
-
 ---
 
-<Layout title="Home" class ="">
-	<h1 class = "font-sans">Welcome to Astro!</h1>
+<Layout>
+  <!-- Hero Section -->
+  <section class="bg-noir text-ivoir text-center py-20 px-4">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">Chorus Symphonia 2025</h1>
+    <p class="text-xl mb-6">Une celebration exceptionnelle de la musique classique</p>
+    
+    <div class="flex flex-wrap justify-center gap-4 mb-8">
+      <span class="bg-orprofond text-noir px-4 py-2 rounded">15-22 Juin 2025</span>
+      <span class="bg-orprofond text-noir px-4 py-2 rounded">Opera National, Paris</span>
+    </div>
+    
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="/programme" class="bg-orprofond text-noir px-6 py-3 rounded font-bold hover:bg-doreclair">
+        Reserver vos billets
+      </a>
+      <a href="/programme" class="border border-ivoir px-6 py-3 rounded hover:bg-ivoir hover:text-noir">
+        Decouvrir le programme
+      </a>
+    </div>
+  </section>
+
+  <!-- Section Decouvrez -->
+  <section class="py-16 px-4 max-w-6xl mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-12">Decouvrez le Festival</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Carte Programme -->
+      <div class="bg-white p-6 rounded shadow">
+        <h3 class="text-xl font-bold mb-2">Programme</h3>
+        <p class="text-grisclair mb-4">8 soirees exceptionnelles avec les plus grands chefs-d'oeuvre</p>
+        <a href="/programme" class="text-orprofond hover:underline">En savoir plus</a>
+      </div>
+      
+      <!-- Carte Artistes -->
+      <div class="bg-white p-6 rounded shadow">
+        <h3 class="text-xl font-bold mb-2">Artistes</h3>
+        <p class="text-grisclair mb-4">Decouvrez les artistes de renommee internationale</p>
+        <a href="/artistes" class="text-orprofond hover:underline">En savoir plus</a>
+      </div>
+      
+      <!-- Carte Scenes -->
+      <div class="bg-white p-6 rounded shadow">
+        <h3 class="text-xl font-bold mb-2">Scenes</h3>
+        <p class="text-grisclair mb-4">3 salles prestigieuses au coeur de Paris</p>
+        <a href="/scenes" class="text-orprofond hover:underline">En savoir plus</a>
+      </div>
+      
+      <!-- Carte Festival -->
+      <div class="bg-white p-6 rounded shadow">
+        <h3 class="text-xl font-bold mb-2">Le Festival</h3>
+        <p class="text-grisclair mb-4">27 ans de passion pour la musique classique</p>
+        <a href="/festival" class="text-orprofond hover:underline">En savoir plus</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Informations Pratiques -->
+  <section class="bg-doreclair py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">Informations Pratiques</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Dates -->
+        <div class="bg-white p-6 rounded shadow text-center">
+          <h3 class="text-xl font-bold mb-2">Dates</h3>
+          <p class="text-2xl text-orprofond font-bold">15-22 Juin 2025</p>
+        </div>
+        
+        <!-- Lieu -->
+        <div class="bg-white p-6 rounded shadow text-center">
+          <h3 class="text-xl font-bold mb-2">Lieu</h3>
+          <p class="text-lg">Opera National, Paris</p>
+          <a href="/scenes" class="text-orprofond hover:underline">Acces</a>
+        </div>
+        
+        <!-- Billetterie -->
+        <div class="bg-white p-6 rounded shadow text-center">
+          <h3 class="text-xl font-bold mb-2">Billetterie</h3>
+          <p class="text-lg mb-2">A partir de 35 euros</p>
+          <a href="/programme" class="text-orprofond hover:underline">Reserver</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Partenaires -->
+  <section class="py-16 px-4 max-w-6xl mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-4">Nos Partenaires</h2>
+    <p class="text-center text-grisclair mb-12">Ils nous font confiance et contribuent au succes du festival</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <h3 class="font-bold mb-4">Partenaires Institutionnels</h3>
+        <div class="bg-grisclair/20 h-20 rounded flex items-center justify-center">Logo</div>
+      </div>
+      
+      <div class="text-center">
+        <h3 class="font-bold mb-4">Mecenes</h3>
+        <div class="bg-grisclair/20 h-20 rounded flex items-center justify-center">Logo</div>
+      </div>
+      
+      <div class="text-center">
+        <h3 class="font-bold mb-4">Partenaires Medias</h3>
+        <div class="bg-grisclair/20 h-20 rounded flex items-center justify-center">Logo</div>
+      </div>
+    </div>
+    
+    <div class="text-center mt-8">
+      <p class="mb-4">Vous souhaitez devenir partenaire ?</p>
+      <a href="#" class="bg-orprofond text-noir px-6 py-3 rounded font-bold hover:bg-doreclair">
+        Contactez-nous
+      </a>
+    </div>
+  </section>
 </Layout>
