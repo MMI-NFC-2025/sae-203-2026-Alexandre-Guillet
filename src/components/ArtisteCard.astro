@@ -12,14 +12,20 @@ const { artiste } = Astro.props;
 ---
 
 <div class="bg-white p-6 rounded shadow">
-  <PbImage 
-    record={artiste} 
-    filename={artiste.image} 
-    alt={artiste.nom} 
-    class="w-full h-48 object-cover rounded mb-4"
-  />
+  {artiste.image ? (
+    <PbImage 
+      record={artiste} 
+      filename={artiste.image} 
+      alt={artiste.nom} 
+      class="w-full h-48 object-cover rounded mb-4"
+    />
+  ) : (
+    <div class="w-full h-48 bg-doreclair rounded mb-4 flex items-center justify-center">
+      <span class="text-orprofond text-4xl">&#9835;</span>
+    </div>
+  )}
   <h2 class="text-xl font-bold">{artiste.nom}</h2>
-  <p class="text-orprofond mb-2">{artiste.type || "Artiste"}</p>
+  <p class="text-orprofond mb-2">{artiste.genre || artiste.type || "Artiste"}</p>
   <p class="text-grisclair text-sm mb-4 line-clamp-3">{artiste.description}</p>
   <a href={`/artistes/${artiste.id}`} class="text-orprofond hover:underline">
     En savoir plus

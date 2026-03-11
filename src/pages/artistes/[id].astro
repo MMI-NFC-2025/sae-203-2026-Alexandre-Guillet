@@ -60,12 +60,18 @@ function formatDate(dateString) {
       <section class="py-12 px-4 max-w-4xl mx-auto">
         <div class="bg-white p-8 rounded shadow">
           <!-- Image -->
-          <PbImage 
-            record={artiste} 
-            filename={artiste.image} 
-            alt={artiste.nom}
-            class="w-full h-64 md:h-96 object-cover rounded mb-8"
-          />
+          {artiste.image ? (
+            <PbImage 
+              record={artiste} 
+              filename={artiste.image} 
+              alt={artiste.nom}
+              class="w-full h-64 md:h-96 object-cover rounded mb-8"
+            />
+          ) : (
+            <div class="w-full h-64 md:h-96 bg-doreclair rounded mb-8 flex items-center justify-center">
+              <span class="text-orprofond text-6xl">&#9835;</span>
+            </div>
+          )}
           
           <!-- Infos -->
           <div class="mb-8">

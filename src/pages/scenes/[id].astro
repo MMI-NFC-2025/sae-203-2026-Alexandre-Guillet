@@ -46,19 +46,27 @@ try {
       <section class="py-12 px-4 max-w-4xl mx-auto">
         <div class="bg-white p-8 rounded shadow mb-8">
           <!-- Image -->
-          <PbImage 
-            record={scene} 
-            filename={scene.image} 
-            alt={scene.nom}
-            class="w-full h-64 md:h-96 object-cover rounded mb-8"
-          />
+          {scene.image ? (
+            <PbImage 
+              record={scene} 
+              filename={scene.image} 
+              alt={scene.nom}
+              class="w-full h-64 md:h-96 object-cover rounded mb-8"
+            />
+          ) : (
+            <div class="w-full h-64 md:h-96 bg-doreclair rounded mb-8 flex items-center justify-center">
+              <span class="text-orprofond text-6xl">&#127965;</span>
+            </div>
+          )}
           
           <!-- Infos -->
-          <div class="flex flex-wrap gap-4 mb-8">
-            <span class="bg-orprofond text-noir px-4 py-2 rounded font-bold">
-              {scene.capacite} places
-            </span>
-          </div>
+          {scene.capacite && (
+            <div class="flex flex-wrap gap-4 mb-8">
+              <span class="bg-orprofond text-noir px-4 py-2 rounded font-bold">
+                {scene.capacite} places
+              </span>
+            </div>
+          )}
           
           <div class="mb-8">
             <h2 class="text-2xl font-bold mb-4">A propos</h2>
