@@ -1,0 +1,136 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import { getAllScenes } from '../../../../backend/backend.mjs';
+
+// Recuperer les scenes pour le select
+let scenes = [];
+try {
+  scenes = await getAllScenes();
+} catch (error) {
+  console.error("Erreur chargement scenes:", error);
+}
+---
+
+<Layout>
+  <PageHeader 
+    title="Ajouter un artiste" 
+    subtitle="Remplissez le formulaire pour ajouter un nouvel artiste" 
+  />
+
+  <section class="py-12 px-4 max-w-2xl mx-auto">
+    <div id="not-logged" class="bg-white p-8 rounded shadow text-center">
+      <p class="mb-4">Vous devez etre connecte.</p>
+      <a href="/connexion" class="bg-orprofond text-white px-6 py-3 rounded">Se connecter</a>
+    </div>
+    
+    <form id="artiste-form" class="hidden bg-white p-8 rounded shadow">
+      <div id="message" class="hidden mb-4 p-4 rounded"></div>
+      
+      <div class="mb-4">
+        <label for="nom" class="block mb-2 font-bold">Nom *</label>
+        <input type="text" id="nom" name="nom" required
+          class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none" />
+      </div>
+      
+      <div class="mb-4">
+        <label for="genre" class="block mb-2 font-bold">Genre musical</label>
+        <input type="text" id="genre" name="genre"
+          class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none"
+          placeholder="Ex: Classique, Jazz, Opera..." />
+      </div>
+      
+      <div class="mb-4">
+        <label for="description" class="block mb-2 font-bold">Description</label>
+        <textarea id="description" name="description" rows="4"
+          class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none"></textarea>
+      </div>
+      
+      <div class="mb-4">
+        <label for="date" class="block mb-2 font-bold">Date de representation</label>
+        <input type="datetime-local" id="date" name="date"
+          class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none" />
+      </div>
+      
+      <div class="mb-4">
+        <label for="scene" class="block mb-2 font-bold">Scene</label>
+        <select id="scene" name="scene"
+          class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none">
+          <option value="">-- Choisir une scene --</option>
+          {scenes.map((scene) => (
+            <option value={scene.id}>{scene.nom}</option>
+          ))}
+        </select>
+      </div>
+      
+      <div class="mb-6">
+        <label for="image" class="block mb-2 font-bold">Photo</label>
+        <input type="file" id="image" name="image" accept="image/*"
+          class="w-full p-3 border border-grisclair rounded" />
+      </div>
+      
+      <div class="flex gap-4">
+        <button type="submit" class="flex-1 bg-orprofond text-white py-3 rounded font-bold hover:bg-noir transition-colors">
+          Ajouter l'artiste
+        </button>
+        <a href="/admin" class="flex-1 border border-grisclair text-center py-3 rounded hover:bg-grisclair transition-colors">
+          Annuler
+        </a>
+      </div>
+    </form>
+  </section>
+</Layout>
+
+<script>
+  import PocketBase from 'pocketbase';
+  
+  const pb = new PocketBase('http://127.0.0.1:8090');
+  
+  const notLoggedDiv = document.getElementById('not-logged');
+  const form = document.getElementById('artiste-form') as HTMLFormElement;
+  const messageDiv = document.getElementById('message');
+  
+  // Check auth
+  if (pb.authStore.isValid) {
+    notLoggedDiv?.classList.add('hidden');
+    form?.classList.remove('hidden');
+  }
+  
+  // Submit
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('nom', (document.getElementById('nom') as HTMLInputElement).value);
+    formData.append('genre', (document.getElementById('genre') as HTMLInputElement).value);
+    formData.append('description', (document.getElementById('description') as HTMLTextAreaElement).value);
+    
+    const dateValue = (document.getElementById('date') as HTMLInputElement).value;
+    if (dateValue) {
+      formData.append('date_de_representation', dateValue.replace('T', ' ') + ':00');
+    }
+    
+    formData.append('scene', (document.getElementById('scene') as HTMLSelectElement).value);
+    
+    const imageInput = document.getElementById('image') as HTMLInputElement;
+    if (imageInput.files && imageInput.files[0]) {
+      formData.append('image', imageInput.files[0]);
+    }
+    
+    try {
+      await pb.collection('artistes').create(formData);
+      if (messageDiv) {
+        messageDiv.textContent = 'Artiste ajoute avec succes !';
+        messageDiv.className = 'mb-4 p-4 rounded bg-green-100 text-green-700';
+        messageDiv.classList.remove('hidden');
+      }
+      form.reset();
+    } catch (error) {
+      if (messageDiv) {
+        messageDiv.textContent = 'Erreur lors de l\'ajout';
+        messageDiv.className = 'mb-4 p-4 rounded bg-red-100 text-red-700';
+        messageDiv.classList.remove('hidden');
+      }
+    }
+  });
+</script>

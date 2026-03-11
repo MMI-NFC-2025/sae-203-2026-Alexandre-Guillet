@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Card from '../components/Card.astro';
+import Accordion from '../components/Accordion.astro';
 ---
 
 <Layout>
@@ -89,6 +90,35 @@ import Card from '../components/Card.astro';
         <div class="bg-grisclair/30 h-32 w-32 rounded-full mx-auto mb-4 flex items-center justify-center">Photo</div>
         <h3 class="font-bold">Antoine Martin</h3>
         <p class="text-orprofond text-sm">Responsable Communication</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="bg-doreclair py-12 px-4">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold mb-8 text-center">Questions Frequentes</h2>
+      
+      <div class="bg-white rounded shadow p-6">
+        <Accordion title="Comment acheter des billets ?">
+          Les billets sont disponibles en ligne sur notre site internet ou aux guichets des salles de concert partenaires. Nous vous recommandons de reserver a l'avance pour les concerts les plus populaires.
+        </Accordion>
+        
+        <Accordion title="Y a-t-il des tarifs reduits ?">
+          Oui, nous proposons des tarifs reduits pour les etudiants, les demandeurs d'emploi et les moins de 26 ans. Des pass famille sont egalement disponibles.
+        </Accordion>
+        
+        <Accordion title="Les concerts sont-ils accessibles aux personnes a mobilite reduite ?">
+          Toutes nos salles partenaires sont accessibles aux personnes a mobilite reduite. N'hesitez pas a nous contacter pour organiser votre venue dans les meilleures conditions.
+        </Accordion>
+        
+        <Accordion title="Puis-je offrir des places en cadeau ?">
+          Absolument ! Nous proposons des cheques-cadeaux et des coffrets decouverte pour faire decouvrir la musique classique a vos proches.
+        </Accordion>
+        
+        <Accordion title="Comment devenir benevole ?">
+          Rejoignez notre equipe de benevoles en remplissant le formulaire sur notre site. Nous recherchons des personnes passionnees pour l'accueil du public et l'aide logistique.
+        </Accordion>
       </div>
     </div>
   </section>

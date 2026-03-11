@@ -1,0 +1,108 @@
+---
+// Composant Carrousel simple
+// Utilisation : <Carousel images={[{src: "...", alt: "..."}]} />
+
+import PbImage from './PbImage.astro';
+
+interface Props {
+  record?: any;
+  images?: string[];
+}
+
+const { record, images = [] } = Astro.props;
+
+// Si on a un record PocketBase avec galerie, on utilise ca
+// Sinon on utilise le tableau images
+const hasImages = record?.galerie?.length > 0 || images.length > 0;
+---
+
+{hasImages && (
+  <div class="carousel relative overflow-hidden rounded">
+    <!-- Container des slides -->
+    <div class="carousel-track flex transition-transform duration-300">
+      {record?.galerie ? (
+        record.galerie.map((img: string, index: number) => (
+          <div class="carousel-slide min-w-full">
+            <PbImage 
+              record={record} 
+              filename={img} 
+              alt={`Image ${index + 1}`}
+              class="w-full h-64 md:h-96 object-cover"
+            />
+          </div>
+        ))
+      ) : (
+        images.map((img, index) => (
+          <div class="carousel-slide min-w-full">
+            <img src={img} alt={`Image ${index + 1}`} class="w-full h-64 md:h-96 object-cover" />
+          </div>
+        ))
+      )}
+    </div>
+    
+    <!-- Boutons navigation -->
+    <button 
+      class="carousel-prev absolute left-2 top-1/2 -translate-y-1/2 bg-noir/50 text-white w-10 h-10 rounded-full hover:bg-noir transition-colors"
+      aria-label="Image precedente"
+    >
+      &#8592;
+    </button>
+    <button 
+      class="carousel-next absolute right-2 top-1/2 -translate-y-1/2 bg-noir/50 text-white w-10 h-10 rounded-full hover:bg-noir transition-colors"
+      aria-label="Image suivante"
+    >
+      &#8594;
+    </button>
+    
+    <!-- Indicateurs -->
+    <div class="carousel-dots absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      {(record?.galerie || images).map((_: any, index: number) => (
+        <button 
+          class={`carousel-dot w-3 h-3 rounded-full ${index === 0 ? 'bg-orprofond' : 'bg-white/50'}`}
+          data-index={index}
+          aria-label={`Aller a l'image ${index + 1}`}
+        />
+      ))}
+    </div>
+  </div>
+)}
+
+<script>
+  document.querySelectorAll('.carousel').forEach((carousel) => {
+    const track = carousel.querySelector('.carousel-track') as HTMLElement;
+    const slides = carousel.querySelectorAll('.carousel-slide');
+    const dots = carousel.querySelectorAll('.carousel-dot');
+    const prevBtn = carousel.querySelector('.carousel-prev');
+    const nextBtn = carousel.querySelector('.carousel-next');
+    
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+    
+    function goToSlide(index: number) {
+      if (index < 0) index = totalSlides - 1;
+      if (index >= totalSlides) index = 0;
+      
+      currentIndex = index;
+      
+      if (track) {
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+      }
+      
+      // Update dots
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('bg-orprofond', i === currentIndex);
+        dot.classList.toggle('bg-white/50', i !== currentIndex);
+      });
+    }
+    
+    prevBtn?.addEventListener('click', () => goToSlide(currentIndex - 1));
+    nextBtn?.addEventListener('click', () => goToSlide(currentIndex + 1));
+    
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const index = Number((dot as HTMLElement).dataset.index);
+        goToSlide(index);
+      });
+    });
+  });
+</script>

@@ -1,0 +1,65 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import ArtisteCard from '../../../components/ArtisteCard.astro';
+import Button from '../../../components/Button.astro';
+import { getArtistesByDay, getAllDays } from '../../../../backend/backend.mjs';
+
+// Generer les pages pour chaque jour
+export async function getStaticPaths() {
+  let days = [];
+  try {
+    days = await getAllDays();
+  } catch (error) {
+    console.error("Erreur chargement jours:", error);
+  }
+  
+  return days.map((day) => ({
+    params: { jour: day },
+  }));
+}
+
+const { jour } = Astro.params;
+
+// Recuperer les artistes de ce jour
+let artistes = [];
+try {
+  artistes = await getArtistesByDay(jour);
+} catch (error) {
+  console.error("Erreur chargement artistes:", error);
+}
+
+// Formater la date pour l'affichage
+function formatDateDisplay(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+---
+
+<Layout>
+  <PageHeader 
+    title={formatDateDisplay(jour)}
+    subtitle={`${artistes.length} artiste(s) ce jour`}
+  />
+
+  <section class="py-12 px-4 max-w-6xl mx-auto">
+    <div class="mb-8">
+      <Button href="/artistes" variant="outline">Tous les artistes</Button>
+    </div>
+    
+    {artistes.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {artistes.map((artiste) => (
+          <ArtisteCard artiste={artiste} />
+        ))}
+      </div>
+    ) : (
+      <p class="text-center text-grisclair">Aucun artiste ce jour.</p>
+    )}
+  </section>
+</Layout>

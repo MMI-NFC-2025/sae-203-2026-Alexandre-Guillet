@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import PbImage from '../../components/PbImage.astro';
 import Button from '../../components/Button.astro';
+import Carousel from '../../components/Carousel.astro';
 import { getAllArtistes, getArtisteById, getSceneById } from '../../../backend/backend.mjs';
 
 // Pour le build statique, generer toutes les pages
@@ -87,6 +88,14 @@ function formatDate(dateString) {
                   </a>
                 </p>
               )}
+            </div>
+          )}
+          
+          <!-- Galerie photos si disponible -->
+          {artiste.galerie && artiste.galerie.length > 0 && (
+            <div class="mb-8">
+              <h3 class="text-xl font-bold mb-4">Galerie photos</h3>
+              <Carousel record={artiste} />
             </div>
           )}
           

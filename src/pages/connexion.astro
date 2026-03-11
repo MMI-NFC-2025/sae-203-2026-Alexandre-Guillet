@@ -1,0 +1,133 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Button from '../components/Button.astro';
+---
+
+<Layout>
+  <PageHeader 
+    title="Connexion" 
+    subtitle="Connectez-vous pour gerer le contenu du festival" 
+  />
+
+  <section class="py-12 px-4 max-w-md mx-auto">
+    <!-- Message d'erreur/succes -->
+    <div id="message" class="hidden mb-4 p-4 rounded text-center"></div>
+    
+    <!-- Formulaire de connexion -->
+    <form id="login-form" class="bg-white p-8 rounded shadow">
+      <div class="mb-4">
+        <label for="email" class="block mb-2 font-bold">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          required
+          class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none"
+          placeholder="votre@email.com"
+        />
+      </div>
+      
+      <div class="mb-6">
+        <label for="password" class="block mb-2 font-bold">Mot de passe</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          required
+          class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none"
+          placeholder="Votre mot de passe"
+        />
+      </div>
+      
+      <button 
+        type="submit"
+        class="w-full bg-orprofond text-white py-3 rounded font-bold hover:bg-noir transition-colors"
+      >
+        Se connecter
+      </button>
+    </form>
+    
+    <!-- Lien admin -->
+    <p class="text-center mt-4 text-grisclair text-sm">
+      Acces reserve aux administrateurs du festival
+    </p>
+    
+    <!-- Zone connecte (cachee par defaut) -->
+    <div id="logged-in" class="hidden mt-8 bg-white p-8 rounded shadow text-center">
+      <p class="mb-4">Connecte en tant que : <strong id="user-email"></strong></p>
+      <div class="flex gap-4 justify-center">
+        <a href="/admin" class="bg-orprofond text-white px-6 py-2 rounded hover:bg-noir transition-colors">
+          Administration
+        </a>
+        <button 
+          id="logout-btn"
+          class="bg-grisclair text-noir px-6 py-2 rounded hover:bg-noir hover:text-white transition-colors"
+        >
+          Deconnexion
+        </button>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import PocketBase from 'pocketbase';
+  
+  const pb = new PocketBase('http://127.0.0.1:8090');
+  
+  const form = document.getElementById('login-form') as HTMLFormElement;
+  const messageDiv = document.getElementById('message');
+  const loggedInDiv = document.getElementById('logged-in');
+  const userEmailSpan = document.getElementById('user-email');
+  const logoutBtn = document.getElementById('logout-btn');
+  
+  // Verifier si deja connecte
+  function checkAuth() {
+    if (pb.authStore.isValid) {
+      form?.classList.add('hidden');
+      loggedInDiv?.classList.remove('hidden');
+      if (userEmailSpan && pb.authStore.model) {
+        userEmailSpan.textContent = pb.authStore.model.email;
+      }
+    } else {
+      form?.classList.remove('hidden');
+      loggedInDiv?.classList.add('hidden');
+    }
+  }
+  
+  // Afficher message
+  function showMessage(text: string, isError: boolean) {
+    if (messageDiv) {
+      messageDiv.textContent = text;
+      messageDiv.className = `mb-4 p-4 rounded text-center ${isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`;
+      messageDiv.classList.remove('hidden');
+    }
+  }
+  
+  // Connexion
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = (document.getElementById('email') as HTMLInputElement).value;
+    const password = (document.getElementById('password') as HTMLInputElement).value;
+    
+    try {
+      await pb.collection('users').authWithPassword(email, password);
+      showMessage('Connexion reussie !', false);
+      checkAuth();
+    } catch (error) {
+      showMessage('Email ou mot de passe incorrect', true);
+    }
+  });
+  
+  // Deconnexion
+  logoutBtn?.addEventListener('click', () => {
+    pb.authStore.clear();
+    showMessage('Deconnexion reussie', false);
+    checkAuth();
+  });
+  
+  // Check initial
+  checkAuth();
+</script>

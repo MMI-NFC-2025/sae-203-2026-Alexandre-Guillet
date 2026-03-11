@@ -138,3 +138,113 @@ export async function deleteScene(id) {
     throw error;
   }
 }
+
+// --- FILTRES SUPPLEMENTAIRES ---
+
+// Recuperer les artistes d'une scene par le NOM de la scene
+export async function getArtistesBySceneName(sceneName) {
+  // D'abord on trouve la scene par son nom
+  const scenes = await pb.collection("scenes").getFullList({
+    filter: `nom = "${sceneName}"`,
+  });
+  
+  if (scenes.length === 0) {
+    return [];
+  }
+  
+  // Ensuite on recupere les artistes de cette scene
+  const records = await pb.collection("artistes").getFullList({
+    filter: `scene = "${scenes[0].id}"`,
+    sort: "date_de_representation",
+  });
+  return records;
+}
+
+// Recuperer les artistes par genre musical
+export async function getArtistesByGenre(genre) {
+  const records = await pb.collection("artistes").getFullList({
+    filter: `genre ~ "${genre}"`,
+    sort: "date_de_representation",
+  });
+  return records;
+}
+
+// Recuperer les artistes par jour (format: "2025-06-21")
+export async function getArtistesByDay(day) {
+  const records = await pb.collection("artistes").getFullList({
+    filter: `date_de_representation ~ "${day}"`,
+    sort: "date_de_representation",
+  });
+  return records;
+}
+
+// Recuperer tous les genres uniques
+export async function getAllGenres() {
+  const artistes = await pb.collection("artistes").getFullList();
+  const genres = [...new Set(artistes.map((a) => a.genre).filter(Boolean))];
+  return genres.sort();
+}
+
+// Recuperer toutes les dates uniques
+export async function getAllDays() {
+  const artistes = await pb.collection("artistes").getFullList({
+    sort: "date_de_representation",
+  });
+  const days = [
+    ...new Set(
+      artistes
+        .map((a) => a.date_de_representation?.split(" ")[0])
+        .filter(Boolean)
+    ),
+  ];
+  return days;
+}
+
+// --- AUTHENTIFICATION ---
+
+// Connexion utilisateur
+export async function login(email, password) {
+  try {
+    const authData = await pb
+      .collection("users")
+      .authWithPassword(email, password);
+    console.log("Connexion reussie :", authData.record.email);
+    return authData;
+  } catch (error) {
+    console.error("Erreur de connexion :", error);
+    throw error;
+  }
+}
+
+// Deconnexion
+export function logout() {
+  pb.authStore.clear();
+  console.log("Deconnexion reussie");
+}
+
+// Verifier si connecte
+export function isLoggedIn() {
+  return pb.authStore.isValid;
+}
+
+// Recuperer l'utilisateur connecte
+export function getCurrentUser() {
+  return pb.authStore.model;
+}
+
+// Inscription utilisateur
+export async function register(email, password, passwordConfirm) {
+  try {
+    const data = {
+      email: email,
+      password: password,
+      passwordConfirm: passwordConfirm,
+    };
+    const record = await pb.collection("users").create(data);
+    console.log("Inscription reussie :", record.email);
+    return record;
+  } catch (error) {
+    console.error("Erreur inscription :", error);
+    throw error;
+  }
+}

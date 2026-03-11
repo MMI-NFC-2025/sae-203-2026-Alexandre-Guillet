@@ -1,0 +1,102 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import PbImage from '../../../components/PbImage.astro';
+import { getAllArtistes } from '../../../../backend/backend.mjs';
+
+let artistes = [];
+try {
+  artistes = await getAllArtistes();
+} catch (error) {
+  console.error("Erreur:", error);
+}
+---
+
+<Layout>
+  <PageHeader title="Gerer les artistes" subtitle="Modifier ou supprimer des artistes" />
+
+  <section class="py-12 px-4 max-w-4xl mx-auto">
+    <div id="not-logged" class="bg-white p-8 rounded shadow text-center">
+      <p class="mb-4">Vous devez etre connecte.</p>
+      <a href="/connexion" class="bg-orprofond text-white px-6 py-3 rounded">Se connecter</a>
+    </div>
+    
+    <div id="admin-content" class="hidden">
+      <div class="mb-6 flex gap-4">
+        <a href="/admin/artistes/nouveau" class="bg-orprofond text-white px-4 py-2 rounded hover:bg-noir transition-colors">
+          Ajouter un artiste
+        </a>
+        <a href="/admin" class="border border-grisclair px-4 py-2 rounded hover:bg-grisclair transition-colors">
+          Retour
+        </a>
+      </div>
+      
+      {artistes.length > 0 ? (
+        <div class="space-y-4">
+          {artistes.map((artiste) => (
+            <div class="bg-white p-4 rounded shadow flex items-center gap-4">
+              <PbImage 
+                record={artiste} 
+                filename={artiste.image} 
+                alt={artiste.nom}
+                class="w-16 h-16 object-cover rounded"
+              />
+              <div class="flex-1">
+                <h3 class="font-bold">{artiste.nom}</h3>
+                <p class="text-sm text-grisclair">{artiste.genre}</p>
+              </div>
+              <div class="flex gap-2">
+                <a 
+                  href={`/admin/artistes/modifier/${artiste.id}`}
+                  class="bg-doreclair px-4 py-2 rounded text-sm hover:bg-orprofond transition-colors"
+                >
+                  Modifier
+                </a>
+                <button 
+                  class="delete-btn bg-red-100 text-red-700 px-4 py-2 rounded text-sm hover:bg-red-200 transition-colors"
+                  data-id={artiste.id}
+                  data-nom={artiste.nom}
+                >
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="text-center text-grisclair">Aucun artiste.</p>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import PocketBase from 'pocketbase';
+  
+  const pb = new PocketBase('http://127.0.0.1:8090');
+  
+  const notLoggedDiv = document.getElementById('not-logged');
+  const adminContent = document.getElementById('admin-content');
+  
+  if (pb.authStore.isValid) {
+    notLoggedDiv?.classList.add('hidden');
+    adminContent?.classList.remove('hidden');
+  }
+  
+  // Suppression
+  document.querySelectorAll('.delete-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = (btn as HTMLElement).dataset.id;
+      const nom = (btn as HTMLElement).dataset.nom;
+      
+      if (confirm(`Supprimer l'artiste "${nom}" ?`)) {
+        try {
+          await pb.collection('artistes').delete(id!);
+          (btn as HTMLElement).closest('.bg-white')?.remove();
+        } catch (error) {
+          alert('Erreur lors de la suppression');
+        }
+      }
+    });
+  });
+</script>

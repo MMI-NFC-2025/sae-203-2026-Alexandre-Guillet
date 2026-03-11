@@ -1,0 +1,54 @@
+---
+// Composant Accordeon simple
+// Utilisation : <Accordion title="Mon titre">Contenu</Accordion>
+
+interface Props {
+  title: string;
+  open?: boolean;
+}
+
+const { title, open = false } = Astro.props;
+---
+
+<div class="accordion border-b border-grisclair">
+  <button 
+    class="accordion-btn w-full flex justify-between items-center py-4 text-left font-bold hover:text-orprofond transition-colors"
+    aria-expanded={open}
+  >
+    <span>{title}</span>
+    <span class="accordion-icon text-2xl transition-transform duration-300">{open ? '−' : '+'}</span>
+  </button>
+  
+  <div class={`accordion-content overflow-hidden transition-all duration-300 ${open ? '' : 'max-h-0'}`}>
+    <div class="pb-4 text-grisclair">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<script>
+  // Gestion des accordeons
+  document.querySelectorAll('.accordion-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const accordion = btn.closest('.accordion');
+      const content = accordion?.querySelector('.accordion-content');
+      const icon = accordion?.querySelector('.accordion-icon');
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      
+      // Toggle
+      btn.setAttribute('aria-expanded', (!isOpen).toString());
+      
+      if (content) {
+        if (isOpen) {
+          content.classList.add('max-h-0');
+        } else {
+          content.classList.remove('max-h-0');
+        }
+      }
+      
+      if (icon) {
+        icon.textContent = isOpen ? '+' : '−';
+      }
+    });
+  });
+</script>

@@ -2,14 +2,31 @@
 import Layout from '../../layouts/Layout.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import ArtisteCard from '../../components/ArtisteCard.astro';
-import { getAllArtistes } from '../../../backend/backend.mjs';
+import { getAllArtistes, getAllGenres, getAllDays, getAllScenes } from '../../../backend/backend.mjs';
 
-// Recuperer tous les artistes depuis PocketBase
+// Recuperer les donnees
 let artistes = [];
+let genres = [];
+let days = [];
+let scenes = [];
+
 try {
   artistes = await getAllArtistes();
+  genres = await getAllGenres();
+  days = await getAllDays();
+  scenes = await getAllScenes();
 } catch (error) {
-  console.error("Erreur chargement artistes:", error);
+  console.error("Erreur chargement:", error);
+}
+
+// Formater date pour affichage
+function formatDay(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("fr-FR", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
 }
 ---
 
@@ -20,6 +37,66 @@ try {
   />
 
   <section class="py-12 px-4 max-w-6xl mx-auto">
+    
+    <!-- Filtres -->
+    <div class="mb-8 p-4 bg-white rounded shadow">
+      <h2 class="font-bold mb-4">Filtrer par :</h2>
+      
+      <div class="flex flex-wrap gap-4">
+        <!-- Par genre -->
+        {genres.length > 0 && (
+          <div>
+            <p class="text-sm text-grisclair mb-2">Genre</p>
+            <div class="flex flex-wrap gap-2">
+              {genres.map((genre) => (
+                <a 
+                  href={`/artistes/genre/${genre}`}
+                  class="px-3 py-1 bg-doreclair rounded text-sm hover:bg-orprofond transition-colors"
+                >
+                  {genre}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <!-- Par jour -->
+        {days.length > 0 && (
+          <div>
+            <p class="text-sm text-grisclair mb-2">Jour</p>
+            <div class="flex flex-wrap gap-2">
+              {days.map((day) => (
+                <a 
+                  href={`/artistes/jour/${day}`}
+                  class="px-3 py-1 bg-doreclair rounded text-sm hover:bg-orprofond transition-colors"
+                >
+                  {formatDay(day)}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <!-- Par scene -->
+        {scenes.length > 0 && (
+          <div>
+            <p class="text-sm text-grisclair mb-2">Scene</p>
+            <div class="flex flex-wrap gap-2">
+              {scenes.map((scene) => (
+                <a 
+                  href={`/artistes/scene/${scene.id}`}
+                  class="px-3 py-1 bg-doreclair rounded text-sm hover:bg-orprofond transition-colors"
+                >
+                  {scene.nom}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <!-- Liste des artistes -->
     {artistes.length > 0 ? (
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {artistes.map((artiste) => (

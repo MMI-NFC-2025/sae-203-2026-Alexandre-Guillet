@@ -1,0 +1,128 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import PageHeader from '../../../../components/PageHeader.astro';
+import { getAllScenes, getSceneById } from '../../../../../backend/backend.mjs';
+
+export async function getStaticPaths() {
+  let scenes = [];
+  try {
+    scenes = await getAllScenes();
+  } catch (error) {
+    console.error("Erreur:", error);
+  }
+  return scenes.map((s) => ({ params: { id: s.id } }));
+}
+
+const { id } = Astro.params;
+
+let scene = null;
+try {
+  scene = await getSceneById(id);
+} catch (error) {
+  console.error("Erreur:", error);
+}
+---
+
+<Layout>
+  <PageHeader title="Modifier la scene" subtitle={scene?.nom || ''} />
+
+  <section class="py-12 px-4 max-w-2xl mx-auto">
+    <div id="not-logged" class="bg-white p-8 rounded shadow text-center">
+      <p class="mb-4">Vous devez etre connecte.</p>
+      <a href="/connexion" class="bg-orprofond text-white px-6 py-3 rounded">Se connecter</a>
+    </div>
+    
+    {scene ? (
+      <form id="scene-form" class="hidden bg-white p-8 rounded shadow" data-id={scene.id}>
+        <div id="message" class="hidden mb-4 p-4 rounded"></div>
+        
+        <div class="mb-4">
+          <label for="nom" class="block mb-2 font-bold">Nom *</label>
+          <input type="text" id="nom" name="nom" required value={scene.nom}
+            class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none" />
+        </div>
+        
+        <div class="mb-4">
+          <label for="description" class="block mb-2 font-bold">Description</label>
+          <textarea id="description" name="description" rows="4"
+            class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none">{scene.description}</textarea>
+        </div>
+        
+        <div class="mb-4">
+          <label for="localisation" class="block mb-2 font-bold">Localisation</label>
+          <input type="text" id="localisation" name="localisation" value={scene.localisation || ''}
+            class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none" />
+        </div>
+        
+        <div class="mb-4">
+          <label for="capacite" class="block mb-2 font-bold">Capacite</label>
+          <input type="number" id="capacite" name="capacite" value={scene.capacite || ''}
+            class="w-full p-3 border border-grisclair rounded focus:border-orprofond focus:outline-none" />
+        </div>
+        
+        <div class="mb-6">
+          <label for="image" class="block mb-2 font-bold">Nouvelle photo (optionnel)</label>
+          <input type="file" id="image" name="image" accept="image/*"
+            class="w-full p-3 border border-grisclair rounded" />
+        </div>
+        
+        <div class="flex gap-4">
+          <button type="submit" class="flex-1 bg-orprofond text-white py-3 rounded font-bold hover:bg-noir transition-colors">
+            Enregistrer
+          </button>
+          <a href="/admin/scenes" class="flex-1 border border-grisclair text-center py-3 rounded hover:bg-grisclair transition-colors">
+            Annuler
+          </a>
+        </div>
+      </form>
+    ) : (
+      <p class="text-center">Scene non trouvee.</p>
+    )}
+  </section>
+</Layout>
+
+<script>
+  import PocketBase from 'pocketbase';
+  
+  const pb = new PocketBase('http://127.0.0.1:8090');
+  
+  const notLoggedDiv = document.getElementById('not-logged');
+  const form = document.getElementById('scene-form') as HTMLFormElement;
+  const messageDiv = document.getElementById('message');
+  
+  if (pb.authStore.isValid) {
+    notLoggedDiv?.classList.add('hidden');
+    form?.classList.remove('hidden');
+  }
+  
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const id = form.dataset.id;
+    const formData = new FormData();
+    formData.append('nom', (document.getElementById('nom') as HTMLInputElement).value);
+    formData.append('description', (document.getElementById('description') as HTMLTextAreaElement).value);
+    formData.append('localisation', (document.getElementById('localisation') as HTMLInputElement).value);
+    formData.append('capacite', (document.getElementById('capacite') as HTMLInputElement).value);
+    
+    const imageInput = document.getElementById('image') as HTMLInputElement;
+    if (imageInput.files && imageInput.files[0]) {
+      formData.append('image', imageInput.files[0]);
+    }
+    
+    try {
+      await pb.collection('scenes').update(id!, formData);
+      if (messageDiv) {
+        messageDiv.textContent = 'Scene modifiee avec succes !';
+        messageDiv.className = 'mb-4 p-4 rounded bg-green-100 text-green-700';
+        messageDiv.classList.remove('hidden');
+      }
+    } catch (error) {
+      if (messageDiv) {
+        messageDiv.textContent = 'Erreur lors de la modification';
+        messageDiv.className = 'mb-4 p-4 rounded bg-red-100 text-red-700';
+        messageDiv.classList.remove('hidden');
+      }
+    }
+  });
+</script>

@@ -1,0 +1,97 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+---
+
+<Layout>
+  <PageHeader 
+    title="Administration" 
+    subtitle="Gerer les artistes et scenes du festival" 
+  />
+
+  <section class="py-12 px-4 max-w-4xl mx-auto">
+    <!-- Message pour non connectes -->
+    <div id="not-logged" class="bg-white p-8 rounded shadow text-center">
+      <p class="mb-4">Vous devez etre connecte pour acceder a cette page.</p>
+      <a href="/connexion" class="bg-orprofond text-white px-6 py-3 rounded hover:bg-noir transition-colors inline-block">
+        Se connecter
+      </a>
+    </div>
+    
+    <!-- Contenu admin (cache par defaut) -->
+    <div id="admin-content" class="hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Gestion Artistes -->
+        <div class="bg-white p-6 rounded shadow">
+          <h2 class="text-xl font-bold mb-4">Artistes</h2>
+          <div class="flex flex-col gap-4">
+            <a 
+              href="/admin/artistes/nouveau" 
+              class="bg-orprofond text-white text-center py-3 rounded hover:bg-noir transition-colors"
+            >
+              Ajouter un artiste
+            </a>
+            <a 
+              href="/admin/artistes" 
+              class="border border-orprofond text-orprofond text-center py-3 rounded hover:bg-orprofond hover:text-white transition-colors"
+            >
+              Gerer les artistes
+            </a>
+          </div>
+        </div>
+        
+        <!-- Gestion Scenes -->
+        <div class="bg-white p-6 rounded shadow">
+          <h2 class="text-xl font-bold mb-4">Scenes</h2>
+          <div class="flex flex-col gap-4">
+            <a 
+              href="/admin/scenes/nouveau" 
+              class="bg-orprofond text-white text-center py-3 rounded hover:bg-noir transition-colors"
+            >
+              Ajouter une scene
+            </a>
+            <a 
+              href="/admin/scenes" 
+              class="border border-orprofond text-orprofond text-center py-3 rounded hover:bg-orprofond hover:text-white transition-colors"
+            >
+              Gerer les scenes
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Lien deconnexion -->
+      <div class="mt-8 text-center">
+        <button 
+          id="logout-btn"
+          class="text-grisclair hover:text-noir transition-colors"
+        >
+          Se deconnecter
+        </button>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import PocketBase from 'pocketbase';
+  
+  const pb = new PocketBase('http://127.0.0.1:8090');
+  
+  const notLoggedDiv = document.getElementById('not-logged');
+  const adminContent = document.getElementById('admin-content');
+  const logoutBtn = document.getElementById('logout-btn');
+  
+  // Verifier authentification
+  if (pb.authStore.isValid) {
+    notLoggedDiv?.classList.add('hidden');
+    adminContent?.classList.remove('hidden');
+  }
+  
+  // Deconnexion
+  logoutBtn?.addEventListener('click', () => {
+    pb.authStore.clear();
+    window.location.href = '/connexion';
+  });
+</script>

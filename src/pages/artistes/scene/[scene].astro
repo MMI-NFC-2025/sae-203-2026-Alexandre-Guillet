@@ -1,0 +1,57 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import ArtisteCard from '../../../components/ArtisteCard.astro';
+import Button from '../../../components/Button.astro';
+import { getArtistesBySceneId, getAllScenes, getSceneById } from '../../../../backend/backend.mjs';
+
+// Generer les pages pour chaque scene
+export async function getStaticPaths() {
+  let scenes = [];
+  try {
+    scenes = await getAllScenes();
+  } catch (error) {
+    console.error("Erreur chargement scenes:", error);
+  }
+  
+  return scenes.map((scene) => ({
+    params: { scene: scene.id },
+  }));
+}
+
+const { scene: sceneId } = Astro.params;
+
+// Recuperer la scene et ses artistes
+let scene = null;
+let artistes = [];
+try {
+  scene = await getSceneById(sceneId);
+  artistes = await getArtistesBySceneId(sceneId);
+} catch (error) {
+  console.error("Erreur chargement:", error);
+}
+---
+
+<Layout>
+  <PageHeader 
+    title={scene ? scene.nom : "Scene"}
+    subtitle={`${artistes.length} artiste(s) sur cette scene`}
+  />
+
+  <section class="py-12 px-4 max-w-6xl mx-auto">
+    <div class="mb-8 flex gap-4">
+      <Button href="/artistes" variant="outline">Tous les artistes</Button>
+      {scene && <Button href={`/scenes/${scene.id}`} variant="outline">Voir la scene</Button>}
+    </div>
+    
+    {artistes.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {artistes.map((artiste) => (
+          <ArtisteCard artiste={artiste} />
+        ))}
+      </div>
+    ) : (
+      <p class="text-center text-grisclair">Aucun artiste sur cette scene.</p>
+    )}
+  </section>
+</Layout>
