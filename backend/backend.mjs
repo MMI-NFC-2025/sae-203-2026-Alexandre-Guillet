@@ -236,6 +236,30 @@ export async function getArtistesByGenre(genre) {
   }
 }
 
+// Recuperer les artistes par type de representation (symphonique, recital, concerto, chambre)
+export async function getArtistesByRepresentation(representation) {
+  try {
+    const records = await pb.collection("artistes").getFullList({
+      filter: `representation ~ "${representation}"`,
+      sort: "date_de_representation",
+    });
+    return records;
+  } catch {
+    return mockArtistes.filter((a) => a.representation?.toLowerCase().includes(representation.toLowerCase()));
+  }
+}
+
+// Recuperer toutes les representations uniques
+export async function getAllRepresentations() {
+  try {
+    const artistes = await pb.collection("artistes").getFullList();
+    const representations = [...new Set(artistes.map((a) => a.representation).filter(Boolean))];
+    return representations.sort();
+  } catch {
+    return ["symphonique", "recital", "concerto", "chambre"];
+  }
+}
+
 // Recuperer les artistes par jour (format: "2025-06-21")
 export async function getArtistesByDay(day) {
   try {

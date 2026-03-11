@@ -1,40 +1,48 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import PageHeader from '../components/PageHeader.astro';
-import PbImage from '../components/PbImage.astro';
-import { getAllArtistes, getAllScenes, getAllRepresentations, getAllDays } from '../../backend/backend.mjs';
+import Layout from '../../../layouts/Layout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import PbImage from '../../../components/PbImage.astro';
+import { getArtistesByRepresentation, getAllScenes, getAllRepresentations, getAllDays } from '../../../../backend/backend.mjs';
 
-// Recuperer les donnees depuis PocketBase
-const artistes = await getAllArtistes();
+// Route dynamique
+export async function getStaticPaths() {
+  const representations = await getAllRepresentations();
+  return representations.map((rep) => ({ params: { representation: rep } }));
+}
+
+const { representation } = Astro.params;
+
+// Recuperer les donnees
+const artistes = await getArtistesByRepresentation(representation);
 const scenes = await getAllScenes();
 const representations = await getAllRepresentations();
 const jours = await getAllDays();
 
-// Fonction pour formater la date
+// Fonctions utilitaires
 function formatDate(dateStr) {
   if (!dateStr) return "";
   const date = new Date(dateStr);
   return date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
-// Fonction pour formater l'heure
 function formatTime(dateStr) {
   if (!dateStr) return "";
   const date = new Date(dateStr);
   return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 }
 
-// Trouver le nom de la scene par son ID
 function getSceneName(sceneId) {
   const scene = scenes.find(s => s.id === sceneId);
   return scene ? scene.nom : "Lieu a confirmer";
 }
+
+const repTitle = representation.charAt(0).toUpperCase() + representation.slice(1);
 ---
 
 <Layout>
   <PageHeader 
-    title="Programme" 
-    subtitle="Decouvrez les concerts de cette edition" 
+    title={`Programme - ${repTitle}`}
+    subtitle={`Concerts de type ${repTitle}`}
   />
 
   <!-- Filtres -->
@@ -43,15 +51,14 @@ function getSceneName(sceneId) {
       <h2 class="text-xl font-bold mb-4">Filtrer par</h2>
       
       <div class="flex flex-wrap gap-4">
-        <!-- Filtre par representation -->
         <div>
           <p class="font-bold mb-2">Representation</p>
           <div class="flex flex-wrap gap-2">
-            <a href="/programme" class="bg-noir text-ivoir px-3 py-1 rounded text-sm">Tous</a>
+            <a href="/programme" class="bg-white text-noir px-3 py-1 rounded text-sm hover:bg-orprofond">Tous</a>
             {representations.map((rep) => (
               <a 
                 href={`/programme/representation/${rep}`} 
-                class="bg-white text-noir px-3 py-1 rounded text-sm hover:bg-orprofond"
+                class={`px-3 py-1 rounded text-sm ${rep === representation ? 'bg-noir text-ivoir' : 'bg-white text-noir hover:bg-orprofond'}`}
               >
                 {rep.charAt(0).toUpperCase() + rep.slice(1)}
               </a>
@@ -59,30 +66,22 @@ function getSceneName(sceneId) {
           </div>
         </div>
         
-        <!-- Filtre par scene -->
         <div>
           <p class="font-bold mb-2">Scene</p>
           <div class="flex flex-wrap gap-2">
             {scenes.map((scene) => (
-              <a 
-                href={`/programme/scene/${scene.id}`} 
-                class="bg-white text-noir px-3 py-1 rounded text-sm hover:bg-orprofond"
-              >
+              <a href={`/programme/scene/${scene.id}`} class="bg-white text-noir px-3 py-1 rounded text-sm hover:bg-orprofond">
                 {scene.nom}
               </a>
             ))}
           </div>
         </div>
         
-        <!-- Filtre par jour -->
         <div>
           <p class="font-bold mb-2">Jour</p>
           <div class="flex flex-wrap gap-2">
             {jours.map((jour) => (
-              <a 
-                href={`/programme/jour/${jour}`} 
-                class="bg-white text-noir px-3 py-1 rounded text-sm hover:bg-orprofond"
-              >
+              <a href={`/programme/jour/${jour}`} class="bg-white text-noir px-3 py-1 rounded text-sm hover:bg-orprofond">
                 {new Date(jour).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
               </a>
             ))}
@@ -92,73 +91,40 @@ function getSceneName(sceneId) {
     </div>
   </section>
 
-  <!-- Liste des concerts -->
+  <!-- Liste -->
   <section class="py-12 px-4 max-w-4xl mx-auto">
-    
     {artistes.length === 0 ? (
-      <p class="text-center text-grisclair">Aucun concert programme pour le moment.</p>
+      <p class="text-center text-grisclair">Aucun concert de type {repTitle}.</p>
     ) : (
       <div class="space-y-6">
         {artistes.map((artiste) => (
           <div class="bg-white p-6 rounded shadow">
             <div class="flex flex-col md:flex-row gap-6">
-              
-              <!-- Image -->
               <div class="md:w-1/4">
                 {artiste.image ? (
-                  <PbImage 
-                    record={artiste} 
-                    filename={artiste.image} 
-                    alt={artiste.nom}
-                    class="w-full h-32 object-cover rounded"
-                  />
+                  <PbImage record={artiste} filename={artiste.image} alt={artiste.nom} class="w-full h-32 object-cover rounded" />
                 ) : (
                   <div class="w-full h-32 bg-doreclair rounded flex items-center justify-center">
                     <span class="text-orprofond text-3xl">&#9835;</span>
                   </div>
                 )}
               </div>
-              
-              <!-- Infos -->
               <div class="md:w-3/4">
                 <div class="flex flex-wrap gap-2 mb-2">
-                  <span class="bg-orprofond text-noir px-2 py-1 rounded text-sm font-bold">
-                    {formatDate(artiste.date_de_representation)}
-                  </span>
-                  {artiste.representation && (
-                    <span class="bg-noir text-ivoir px-2 py-1 rounded text-sm">
-                      {artiste.representation}
-                    </span>
-                  )}
+                  <span class="bg-orprofond text-noir px-2 py-1 rounded text-sm font-bold">{formatDate(artiste.date_de_representation)}</span>
+                  <span class="bg-noir text-ivoir px-2 py-1 rounded text-sm">{artiste.representation}</span>
                 </div>
-                
                 <h2 class="text-2xl font-bold mb-1">{artiste.nom}</h2>
-                
-                <p class="text-grisclair mb-2">
-                  {getSceneName(artiste.scene)} - {formatTime(artiste.date_de_representation)}
-                </p>
-                
+                <p class="text-grisclair mb-2">{getSceneName(artiste.scene)} - {formatTime(artiste.date_de_representation)}</p>
                 <div class="flex gap-4 mt-4">
-                  <a 
-                    href={`/artistes/${artiste.id}`} 
-                    class="text-orprofond hover:underline"
-                  >
-                    Voir l'artiste
-                  </a>
-                  <a 
-                    href="#" 
-                    class="bg-orprofond text-noir px-4 py-2 rounded hover:bg-doreclair"
-                  >
-                    Reserver
-                  </a>
+                  <a href={`/artistes/${artiste.id}`} class="text-orprofond hover:underline">Voir l'artiste</a>
+                  <a href="#" class="bg-orprofond text-noir px-4 py-2 rounded hover:bg-doreclair">Reserver</a>
                 </div>
               </div>
-              
             </div>
           </div>
         ))}
       </div>
     )}
-
   </section>
 </Layout>
