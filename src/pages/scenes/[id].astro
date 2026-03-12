@@ -48,7 +48,7 @@ const artistes = scene ? await getArtistesBySceneId(id).catch(() => []) : [];
           <Button href="/scenes">← Retour</Button>
         </div>
 
-
+        <!-- Artistes -->
         <div class="mt-12">
           <h2 class="text-2xl font-bold mb-6">Artistes sur cette scène</h2>
           {artistes.length > 0 ? (
