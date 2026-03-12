@@ -1,0 +1,26 @@
+---
+
+import PbImage from './PbImage.astro';
+
+interface Props {
+  scene: any;
+}
+
+const { scene } = Astro.props;
+---
+
+<div class="bg-white p-6 rounded shadow">
+  <PbImage 
+    record={scene} 
+    filename={scene.photo} 
+    alt={scene.nom}
+    class="w-full h-48 object-cover rounded mb-4"
+  />
+  <h2 class="text-2xl font-bold mb-2">{scene.nom}</h2>
+  <p class="text-grisclair mb-2">{scene.localisation}</p>
+  <p class="text-orprofond font-bold mb-4">{scene.capacite} places</p>
+  <p class="mb-4 line-clamp-3">{scene.description}</p>
+  <a href={`/scenes/${scene.id}`} class="text-orprofond hover:underline">
+    En savoir plus
+  </a>
+</div>

@@ -1,0 +1,21 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ArtisteCard from '../../components/ArtisteCard.astro';
+import { getAllArtistes } from '../../../backend/backend.mjs';
+
+const artistes = await getAllArtistes().catch(() => []);
+---
+
+<Layout>
+  <PageHeader title="Artistes" subtitle="Découvrez les artistes du festival" />
+  <section class="py-12 px-4 max-w-6xl mx-auto">
+    {artistes.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {artistes.map((artiste: any) => <ArtisteCard artiste={artiste} />)}
+      </div>
+    ) : (
+      <p class="text-center text-grisclair">Aucun artiste trouvé.</p>
+    )}
+  </section>
+</Layout>

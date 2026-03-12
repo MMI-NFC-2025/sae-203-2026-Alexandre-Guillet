@@ -1,0 +1,73 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PbImage from '../../components/PbImage.astro';
+import Button from '../../components/Button.astro';
+import ArtisteCard from '../../components/ArtisteCard.astro';
+import { getAllScenes, getSceneById, getArtistesBySceneId } from '../../../backend/backend.mjs';
+
+export async function getStaticPaths() {
+  const scenes = await getAllScenes().catch(() => []);
+  return scenes.map((scene: any) => ({ params: { id: scene.id } }));
+}
+
+const { id } = Astro.params;
+const scene = await getSceneById(id).catch(() => null);
+const artistes = scene ? await getArtistesBySceneId(id).catch(() => []) : [];
+---
+
+<Layout>
+  {scene ? (
+    <>
+      <PageHeader title={scene.nom} subtitle={scene.localisation} />
+      <section class="py-12 px-4 max-w-6xl mx-auto">
+        <div class="bg-white p-8 rounded shadow mb-8">
+      
+          <PbImage 
+            record={scene} 
+            filename={scene.photo} 
+            alt={scene.nom}
+            class="w-full h-96 object-cover rounded mb-8"
+          />
+          
+          <div class="mb-8">
+            <div class="flex gap-4 mb-4">
+              <span class="bg-orprofond text-noir px-4 py-2 rounded font-bold">{scene.capacite} places</span>
+            </div>
+            <h2 class="text-2xl font-bold mb-4">À propos</h2>
+            <p class="text-grisclair">{scene.description}</p>
+          </div>
+
+          {scene.acces && (
+            <div class="bg-doreclair p-6 rounded mb-8">
+              <h3 class="font-bold mb-2">Accès</h3>
+              <p>{scene.acces}</p>
+            </div>
+          )}
+
+          <Button href="/scenes">← Retour</Button>
+        </div>
+
+
+        <div class="mt-12">
+          <h2 class="text-2xl font-bold mb-6">Artistes sur cette scène</h2>
+          {artistes.length > 0 ? (
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {artistes.map((artiste: any) => <ArtisteCard artiste={artiste} />)}
+            </div>
+          ) : (
+            <p class="text-center text-grisclair">Aucun artiste programmé.</p>
+          )}
+        </div>
+      </section>
+    </>
+  ) : (
+    <>
+      <PageHeader title="Scène non trouvée" />
+      <section class="py-12 px-4 max-w-4xl mx-auto text-center">
+        <p class="mb-8">Cette scène n'existe pas.</p>
+        <Button href="/scenes">← Retour</Button>
+      </section>
+    </>
+  )}
+</Layout>

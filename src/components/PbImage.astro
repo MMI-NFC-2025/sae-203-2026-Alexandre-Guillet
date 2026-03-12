@@ -1,0 +1,32 @@
+---
+
+interface Props {
+  record: any;
+  filename: string;
+  alt: string;
+  class?: string;
+}
+
+const { record, filename, alt, class: className = "" } = Astro.props;
+
+const pbUrl = "https://chorussymphonia.alexandreguillet.fr";
+
+function getImageUrl(record: any, filename: string) {
+  if (!record || !filename) return null;
+  const url = `${pbUrl}/api/files/${record.collectionId}/${record.id}/${filename}`;
+  console.log("PbImage - URL générée:", url);
+  console.log("PbImage - Record ID:", record.id, "Collection:", record.collectionId, "Filename:", filename);
+  return url;
+}
+
+const imageUrl = getImageUrl(record, filename);
+console.log("PbImage - URL finale:", imageUrl);
+---
+
+{imageUrl ? (
+  <img src={imageUrl} alt={alt} class={className} />
+) : (
+  <div class={`bg-grisclair/30 flex items-center justify-center ${className}`}>
+    Photo
+  </div>
+)}

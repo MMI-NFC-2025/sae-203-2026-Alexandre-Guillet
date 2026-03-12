@@ -1,4 +1,21 @@
 ---
-import '../styles/global.css';
-import '@fontsource-variable/arimo';
+// logo image is now served from public/; reference with absolute path
 ---
+
+<header class="bg-noir text-ivoir p-4">
+  <nav class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+
+     <a href="/" ><img src="/header.webp" alt="Logo" class="w-8 h-8 object-contain" /></a>
+    <a href="/" class="text-xl font-bold">Chorus Symphonia</a>
+    
+    <ul class="flex flex-wrap justify-center gap-4">
+      <li><a href="/" class="hover:text-orprofond">Accueil</a></li>
+      <li><a href="/programme" class="hover:text-orprofond">Programme</a></li>
+      <li><a href="/artistes" class="hover:text-orprofond">Artistes</a></li>
+      <li><a href="/scenes" class="hover:text-orprofond">Scenes</a></li>
+      <li><a href="/festival" class="hover:text-orprofond">Le Festival</a></li>
+      <li><a href="/infospratiques" class="hover:text-orprofond">Infos Pratiques</a></li>
+      <li><a href="/contact" class="hover:text-orprofond">Contact</a></li>
+    </ul>
+  </nav>
+</header>

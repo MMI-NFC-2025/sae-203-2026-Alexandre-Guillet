@@ -1,0 +1,36 @@
+---
+interface Props {
+  record: any;
+  filenames: string | string[];
+  alt: string;
+  class?: string;
+}
+const { record, filenames, alt, class: className = "" } = Astro.props;
+
+const pbUrl = "https://chorussymphonia.alexandreguillet.fr";
+
+
+function getImageUrl(record: any, filename: string) {
+  if (!record || !filename) return null;
+  return `${pbUrl}/api/files/${record.collectionId}/${record.id}/${filename}`;
+}
+
+const imageFilenames = Array.isArray(filenames) ? filenames : (filenames ? [filenames] : []);
+const validImages = imageFilenames.filter(f => f && getImageUrl(record, f));
+---
+
+{validImages.length > 0 ? (
+  <div class={`grid grid-cols-2 md:grid-cols-3 gap-4 ${className}`}>
+    {validImages.map((filename) => (
+      <img 
+        src={getImageUrl(record, filename)} 
+        alt={alt} 
+        class="w-full h-48 object-cover rounded"
+      />
+    ))}
+  </div>
+) : (
+  <div class={`bg-grisclair/30 flex items-center justify-center rounded ${className}`}>
+    Galerie vide
+  </div>
+)}

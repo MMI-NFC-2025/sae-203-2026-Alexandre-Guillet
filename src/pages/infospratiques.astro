@@ -1,0 +1,135 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/global.css';
+---
+
+<Layout title="Informations Pratiques | Chorus Symphonia 2025">
+  <main class="bg-[#FDF8F1] font-['Arimo'] text-[#333]">
+    
+    <section class="relative h-[60vh] flex items-center overflow-hidden">
+      <div class="absolute inset-0 bg-black/50 z-10"></div>
+      <img 
+        src="https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&q=80" 
+        alt="Salle des glaces" 
+        class="absolute inset-0 w-full h-full object-cover"
+      />
+      <div class="container mx-auto px-6 relative z-20 text-white">
+        <h1 class="text-5xl md:text-7xl font-serif mb-4">Informations Pratiques</h1>
+        <p class="text-xl md:text-2xl font-light italic opacity-90">Tout ce que vous devez savoir pour profiter du festival</p>
+      </div>
+    </section>
+
+    <div class="max-w-6xl mx-auto px-6 py-20">
+      
+      <section class="mb-20">
+        <h2 class="text-3xl font-serif text-[#B89150] mb-10 border-b border-[#B89150]/20 pb-4">Billetterie</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="bg-white p-8 rounded-2xl border border-[#E8D5B7] shadow-sm">
+            <h3 class="text-xl font-serif mb-6 flex items-center gap-3">
+                <span class="w-8 h-px bg-[#B89150]"></span> Tarifs
+            </h3>
+            <ul class="space-y-4 text-sm leading-relaxed">
+              <li><strong>Plein tarif :</strong> 65€ - 120€ selon les salles et emplacements</li>
+              <li><strong>Tarif réduit :</strong> 35€ - 80€ (étudiants, -26 ans, demandeurs d'emploi)</li>
+              <li><strong>Abonnement 3 concerts :</strong> 150€ <span class="text-gray-400 text-xs italic">(au lieu de 195€)</span></li>
+              <li><strong>Abonnement 5 concerts :</strong> 240€ <span class="text-gray-400 text-xs italic">(au lieu de 325€)</span></li>
+              <li><strong>Pass Festival (8 concerts) :</strong> 380€ <span class="text-gray-400 text-xs italic">(au lieu de 520€)</span></li>
+            </ul>
+          </div>
+
+          <div class="bg-white p-8 rounded-2xl border border-[#E8D5B7] shadow-sm">
+            <h3 class="text-xl font-serif mb-6 flex items-center gap-3">
+                <span class="w-8 h-px bg-[#B89150]"></span> Points de vente
+            </h3>
+            <ul class="space-y-4 text-sm">
+              <li><strong>En ligne :</strong> Sur notre site web (disponible 24h/24)</li>
+              <li><strong>Par téléphone :</strong> 01 42 33 44 55 (du lundi au vendredi, 10h-18h)</li>
+              <li><strong>Billetteries des salles :</strong> Opéra National, Théâtre des Champs-Élysées, Salle Pleyel</li>
+              <li><strong>Partenaires :</strong> Points de vente Fnac et Carrefour Spectacles</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-20">
+        <h2 class="text-3xl font-serif text-[#B89150] mb-10 border-b border-[#B89150]/20 pb-4">Dates, Horaires & Accès</h2>
+        
+        <div class="bg-white p-8 rounded-2xl border border-[#E8D5B7] mb-8 shadow-sm">
+            <p class="text-lg font-bold mb-4">Du 15 au 22 juin 2025</p>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">Tous les concerts commencent à <time class="font-bold">20h00</time>. Nous vous recommandons d'arriver au moins 30 minutes avant le début du concert.</p>
+            <p class="text-sm text-gray-500 italic">Les portes ferment 5 minutes après le début. Les retardataires ne pourront accéder à la salle qu'à l'entracte.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          {[
+            { name: "Opéra National de Paris", addr: "Place de l'Opéra, 75009 Paris", m: "Opéra (3, 7, 8)", r: "Auber (A)" },
+            { name: "Théâtre des Champs-Élysées", addr: "15 Avenue Montaigne, 75008 Paris", m: "Alma-Marceau (9)", r: "Pont de l'Alma (C)" },
+            { name: "Salle Pleyel", addr: "252 Rue du Fbg Saint-Honoré, 75008 Paris", m: "Ternes (2)", r: "Charles de Gaulle-Étoile (A)" }
+          ].map(lieu => (
+            <div class="bg-white p-6 rounded-xl border border-[#E8D5B7] hover:border-[#B89150] transition-colors">
+              <h4 class="font-serif font-bold text-[#B89150] mb-4">{lieu.name}</h4>
+              <div class="text-xs space-y-2 text-gray-600">
+                <p><strong>Adresse :</strong> {lieu.addr}</p>
+                <p><strong>Métro :</strong> {lieu.m}</p>
+                <p><strong>RER :</strong> {lieu.r}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div class="grid md:grid-cols-2 gap-12 mb-20">
+        <section>
+          <h2 class="text-2xl font-serif text-[#B89150] mb-6">Services & Accessibilité</h2>
+          <div class="bg-white p-8 rounded-2xl border border-[#E8D5B7] shadow-sm h-full">
+            <ul class="space-y-4 text-sm">
+                <li><strong>Vestiaire :</strong> Service gratuit dans toutes les salles</li>
+                <li><strong>Restauration :</strong> Bars et espaces sur place (réservation conseillée)</li>
+                <li><strong>Accessibilité PMR :</strong> Salles accessibles. Signalez votre venue à la réservation</li>
+                <li><strong>Boucle magnétique :</strong> Pour les personnes malentendantes</li>
+                <li><strong>Braille :</strong> Programmes sur demande (48h à l'avance)</li>
+            </ul>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-serif text-[#B89150] mb-6">Conseils Pratiques</h2>
+          <div class="bg-white p-8 rounded-2xl border border-[#E8D5B7] shadow-sm h-full">
+            <ul class="space-y-4 text-sm">
+                <li class="flex items-start gap-2"><span>•</span> <strong>Tenue :</strong> Correcte exigée</li>
+                <li class="flex items-start gap-2"><span>•</span> <strong>Captation :</strong> Photos et vidéos interdites</li>
+                <li class="flex items-start gap-2"><span>•</span> <strong>Mobiles :</strong> À éteindre impérativement</li>
+                <li class="flex items-start gap-2"><span>•</span> <strong>Âge :</strong> Accessible à partir de 8 ans</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <section class="bg-white p-10 rounded-3xl border border-[#E8D5B7] shadow-sm">
+        <h2 class="text-3xl font-serif text-center mb-12">Foire aux questions</h2>
+        <div class="max-w-3xl mx-auto space-y-4">
+          <details class="group border-b border-[#FDF8F1] pb-4">
+            <summary class="flex justify-between items-center cursor-pointer font-bold text-sm uppercase tracking-wider py-2">
+              Comment réserver mes billets ?
+              <span class="text-[#B89150] group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p class="text-sm text-gray-500 pt-4 leading-relaxed">
+              Vous pouvez réserver vos billets directement en ligne sur notre site 24h/24, par téléphone au +33 1 23 45 67 89 ou à la billetterie de l'Opéra National.
+            </p>
+          </details>
+
+          <details class="group border-b border-[#FDF8F1] pb-4">
+            <summary class="flex justify-between items-center cursor-pointer font-bold text-sm uppercase tracking-wider py-2">
+              Y a-t-il des tarifs réduits ?
+              <span class="text-[#B89150] group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p class="text-sm text-gray-500 pt-4 leading-relaxed">
+              Oui, nous proposons des tarifs réduits de 20% pour les étudiants et les moins de 26 ans sur présentation d'un justificatif.
+            </p>
+          </details>
+          </div>
+      </section>
+
+    </div>
+
+    </main>

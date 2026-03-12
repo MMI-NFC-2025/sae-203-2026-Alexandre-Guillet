@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+---
+
+<Layout>
+  <PageHeader 
+    title="Connexion"
+    subtitle="Accédez à l'espace d'administration"
+  />
+
+  <section class="py-12 px-4 max-w-md mx-auto">
+    <div class="bg-white p-8 rounded shadow">
+      <form action="/api/login" method="POST" class="space-y-6">
+        <div>
+          <label for="email" class="block font-bold mb-2">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            required 
+            class="w-full border rounded px-3 py-2"
+            placeholder="admin@festival.com"
+          />
+        </div>
+        
+        <div>
+          <label for="password" class="block font-bold mb-2">Mot de passe</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            required 
+            class="w-full border rounded px-3 py-2"
+            placeholder="••••••••"
+          />
+        </div>
+        
+        <button type="submit" class="w-full bg-orprofond text-noir px-6 py-2 rounded font-bold hover:bg-doreclair">
+          Se connecter
+        </button>
+      </form>
+      
+      <div class="mt-8 p-4 bg-doreclair rounded">
+        <p class="text-sm text-noir">💡 <strong>Note:</strong> Les identifiants administrateurs se trouvent dans le fichier <code>backend/login.txt</code></p>
+      </div>
+    </div>
+  </section>
+</Layout>

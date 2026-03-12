@@ -1,0 +1,87 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PbGallery from '../../components/PbGallery.astro';
+import Button from '../../components/Button.astro';
+import ArtisteCard from '../../components/ArtisteCard.astro';
+import { getAllArtistes, getArtisteById, getSceneById, getArtistesBySceneId } from '../../../backend/backend.mjs';
+
+export async function getStaticPaths() {
+  const artistes = await getAllArtistes().catch(() => []);
+  return artistes.map((artiste: any) => ({ params: { id: artiste.id } }));
+}
+
+const { id } = Astro.params;
+const artiste = await getArtisteById(id).catch(() => null);
+let scene: any = null;
+let artistesScene: any[] = [];
+
+function formatDate(dateStr: string | null | undefined) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+if (artiste?.scene) {
+  scene = await getSceneById(artiste.scene).catch(() => null);
+  artistesScene = await getArtistesBySceneId(artiste.scene).catch(() => []);
+  artistesScene = artistesScene.filter((a: any) => a.id !== artiste.id);
+}
+---
+
+<Layout>
+  {artiste ? (
+      <PageHeader title={artiste.nom} subtitle={artiste.specialite} />
+      <section class="py-12 px-4 max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded shadow">
+          <!-- Description -->
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold mb-4">À propos</h2>
+            <p class="text-grisclair">{artiste.description}</p>
+          </div>
+
+          <!-- Galerie -->
+          {artiste.galerie_photo && (
+            <div class="mb-6">
+              <h3 class="text-xl font-bold mb-4">Galerie</h3>
+              <PbGallery record={artiste} filenames={artiste.galerie_photo} alt={artiste.nom} />
+            </div>
+          )}
+
+          {scene && (
+            <div class="bg-doreclair p-6 rounded mb-6">
+              <h3 class="font-bold mb-2">Représentation</h3>
+              <p><strong>De:</strong> {scene.nom}</p>
+              <p><strong>Date:</strong> {formatDate(artiste.date_de_representation)}</p>
+            </div>
+          )}
+
+          <Button href="/artistes">← Retour</Button>
+        </div>
+
+        {artistesScene.length > 0 && (
+          <div class="mt-12">
+            <h2 class="text-2xl font-bold mb-6">Autres artistes sur cette scène</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {artistesScene.map((a: any) => <ArtisteCard artiste={a} />)}
+            </div>
+          </div>
+        )}
+      </section>
+    </>
+  ) : (
+    <>
+      <PageHeader title="Artiste non trouvé" />
+      <section class="py-12 px-4 max-w-4xl mx-auto text-center">
+        <p class="mb-8">Cet artiste n'existe pas.</p>
+        <Button href="/artistes">← Retour</Button>
+      </section>
+    </>
+  )}
+</Layout>

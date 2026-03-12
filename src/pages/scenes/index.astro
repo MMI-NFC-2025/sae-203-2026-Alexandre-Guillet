@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SceneCard from '../../components/SceneCard.astro';
+import { getAllScenes } from '../../../backend/backend.mjs';
+const scenes = await getAllScenes().catch(() => []);
+---
+
+<Layout>
+  <PageHeader title="Scènes" subtitle="Les salles du festival" />
+  <section class="py-12 px-4 max-w-6xl mx-auto">
+    {scenes.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {scenes.map((scene: any) => <SceneCard scene={scene} />)}
+      </div>
+    ) : (
+      <p class="text-center text-grisclair">Aucune scène trouvée.</p>
+    )}
+  </section>
+</Layout>
